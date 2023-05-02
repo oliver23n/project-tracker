@@ -1,10 +1,4 @@
-
-
-
-
-
-//remove project function
-let projects = [];
+let projects =[];
 
 function displayTime(){
     //display time in header box
@@ -12,9 +6,9 @@ function displayTime(){
     const current = $('#time').text(today.format('MMM D, YYYY h:mm:ss a'));
 }
 
-
 //get all the input
 function getProject(){
+
     //get the name
     const name = $('#projectName');
     //get the type of project
@@ -28,12 +22,15 @@ function getProject(){
         due: dueDate.val()
     };
     projects.push(project);
-    localStorage.setItem("stored",JSON.stringify(projects));
+    //right here  clear local and then update 
+    localStorage.clear();
+    storeItems(projects);
+    showProjects();
+   
     //clear values 
     name.val('');
     typeProject.val('');
     dueDate.val('');
-    showProjects();
 
 }
 function showProjects(){
@@ -43,7 +40,7 @@ function showProjects(){
     tbody.attr('id','tbody');
     $('#myTable').append(tbody);
     //read from local storage
-    let stored = JSON.parse(localStorage.getItem('stored'));
+    stored = getItems();
     //for looop
     for (let i = 0; i <stored.length; i++){
         //create table row
@@ -54,7 +51,8 @@ function showProjects(){
         typeData = $('<td>').text(stored[i].type);
         dueData = $('<td>').text(stored[i].due);
         //add clear button
-        clearB = $('<button>').text("remove").attr('class','removeB');
+        clearB = $('<button>')
+        clearB.text("remove").addClass('removeB').attr('data-index',i);//add data-index
         row.append(nameData,typeData,dueData,clearB);
 
     }
@@ -62,16 +60,44 @@ function showProjects(){
 }
 function removebody (){
     $('#tbody').remove();
+};
+function removeElement(){
+     //get the data-index
+
+    //mutate array
+    //push to stored 
+    //display to main
+    
+};
+function storeItems(projects){
+    localStorage.setItem("stored", JSON.stringify(projects));
+};
+function getItems(){
+    let stored = localStorage.getItem('stored');
+    if(stored){
+        stored = JSON.parse(stored);
+    }else{
+        stored = [];
+    }
+    return stored;
+}
+function init(){
+    projects = getItems();
+    
+    setInterval(displayTime, 1000);
+    
+    showProjects();
+
+    $('#submitB').on('click', getProject);
+    $('#myTable').on('click','.removeB',removeElement);
+    $(function () {
+        $("#datepicker").datepicker({
+            // showOn: "button",
+            // buttonImage: "images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date"
+        });
+    });
 }
 
-
-setInterval(function () {
-    displayTime();
-}, 1000);
-
-showProjects();
-$('#submitB').on('click', getProject);
-$('#myTable').on('click','.removeB',function(){
-    $(this).parent().remove();
-    //update local storage
-})
+init();

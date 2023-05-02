@@ -56,6 +56,7 @@ function showProjects(){
         row.append(nameData,typeData,dueData,clearB);
 
     }
+    console.log(projects);
     
 }
 function removebody (){
@@ -63,11 +64,14 @@ function removebody (){
 };
 function removeElement(){
      //get the data-index
-
+    const index = $(this).attr('data-index');
     //mutate array
+    projects.splice(index,1);
     //push to stored 
+    localStorage.clear();
+    storeItems(projects);
     //display to main
-    
+    showProjects();    
 };
 function storeItems(projects){
     localStorage.setItem("stored", JSON.stringify(projects));
